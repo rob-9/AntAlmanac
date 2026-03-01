@@ -10,6 +10,7 @@ import {
     MenuList,
     Popover,
     Stack,
+    Tooltip,
     Typography,
 } from '@mui/material';
 import Link from 'next/link';
@@ -40,7 +41,7 @@ export function Header() {
     const { session, sessionIsValid } = useSessionStore();
     const isMobile = useIsMobile();
 
-    const platform = window.location.pathname.split('/')[1] === 'planner' ? 'Planner' : 'Scheduler';
+    const plannerUrl = process.env.NEXT_PUBLIC_BASE_URL ? `https://${process.env.NEXT_PUBLIC_BASE_URL}/planner` : null;
 
     const clearStorage = () => {
         removeLocalStorageImportedUser();
@@ -138,7 +139,7 @@ export function Header() {
                                         <MenuItem
                                             component={Link}
                                             href="/"
-                                            selected={platform === 'Scheduler'}
+                                            selected
                                             onClick={() => setAnchorEl(null)}
                                             sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit' }}
                                         >
@@ -149,20 +150,26 @@ export function Header() {
                                                 Scheduler
                                             </Typography>
                                         </MenuItem>
-                                        <MenuItem
-                                            component={Link}
-                                            href="/planner"
-                                            selected={platform === 'Planner'}
-                                            onClick={() => setAnchorEl(null)}
-                                            sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit' }}
-                                        >
-                                            <ListItemIcon>
-                                                <Route />
-                                            </ListItemIcon>
-                                            <Typography fontSize="15px" fontWeight={500}>
-                                                Planner
-                                            </Typography>
-                                        </MenuItem>
+                                        <Tooltip title={plannerUrl ? '' : 'Planner is not available in dev'}>
+                                            <MenuItem
+                                                component="a"
+                                                href={plannerUrl ?? undefined}
+                                                disabled={!plannerUrl}
+                                                onClick={() => setAnchorEl(null)}
+                                                sx={{
+                                                    minHeight: 'fit-content',
+                                                    textDecoration: 'none',
+                                                    color: 'inherit',
+                                                }}
+                                            >
+                                                <ListItemIcon>
+                                                    <Route />
+                                                </ListItemIcon>
+                                                <Typography fontSize="15px" fontWeight={500}>
+                                                    Planner
+                                                </Typography>
+                                            </MenuItem>
+                                        </Tooltip>
                                     </MenuList>
                                 </Popover>
                             </>
@@ -185,21 +192,26 @@ export function Header() {
                                     >
                                         Scheduler
                                     </Button>
-                                    <Button
-                                        component={Link}
-                                        href="/planner"
-                                        startIcon={<Route />}
-                                        sx={{
-                                            boxShadow: 'none',
-                                            color: 'white',
-                                            fontWeight: 500,
-                                            fontSize: 14,
-                                            py: 0.4,
-                                            textDecoration: 'none',
-                                        }}
-                                    >
-                                        Planner
-                                    </Button>
+                                    <Tooltip title={plannerUrl ? '' : 'Planner is not available in dev'}>
+                                        <span>
+                                            <Button
+                                                component="a"
+                                                href={plannerUrl ?? undefined}
+                                                disabled={!plannerUrl}
+                                                startIcon={<Route />}
+                                                sx={{
+                                                    boxShadow: 'none',
+                                                    color: 'white',
+                                                    fontWeight: 500,
+                                                    fontSize: 14,
+                                                    py: 0.4,
+                                                    textDecoration: 'none',
+                                                }}
+                                            >
+                                                Planner
+                                            </Button>
+                                        </span>
+                                    </Tooltip>
                                 </ButtonGroup>
                             </>
                         )}
